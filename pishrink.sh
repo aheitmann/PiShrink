@@ -169,7 +169,7 @@ EOFRC
 help() {
 	local help
 	read -r -d '' help << EOM
-Usage: $0 [-adhnrsvzZ] imagefile.img [newimagefile.img]
+Usage: $0 [-adhrspvzZ] imagefile.img [newimagefile.img]
 
   -s         Don't expand filesystem when image is booted the first time
   -v         Be verbose
@@ -178,6 +178,7 @@ Usage: $0 [-adhnrsvzZ] imagefile.img [newimagefile.img]
   -z         Compress image after shrinking with gzip
   -Z         Compress image after shrinking with xz
   -a         Compress image in parallel using multiple cores
+  -p         Remove logs, apt archives, dhcp leases and ssh hostkeys
   -d         Write debug messages in a debug log file
 EOM
 	echo "$help"
@@ -190,17 +191,19 @@ update_check=true
 repair=false
 parallel=false
 verbose=false
+prep=false
 ziptool=""
 
-while getopts ":adnhrsvzZ" opt; do
+while getopts ":adhrspvzZ" opt; do
   case "${opt}" in
     a) parallel=true;;
     d) debug=true;;
     n) update_check=false;;
     h) help;;
+	p) prep=true;;
     r) repair=true;;
     s) should_skip_autoexpand=true ;;
-    v) verbose=true;;
+    v) verbose=true;;	
     z) ziptool="gzip";;
     Z) ziptool="xz";;
     *) help;;
@@ -332,6 +335,14 @@ elif [ "$should_skip_autoexpand" = false ]; then
   set_autoexpand
 else
   echo "Skipping autoexpanding process..."
+fi
+
+if [[ $prep == true ]]; then
+  info "Syspreping: Removing logs, apt archives, dhcp leases and ssh hostkeys"
+  mountdir=$(mktemp -d)
+  mount "$loopback" "$mountdir"
+  rm -rvf $mountdir/var/cache/apt/archives/* $mountdir/var/lib/dhcpcd5/* $mountdir/var/log/* $mountdir/var/tmp/* $mountdir/tmp/* $mountdir/etc/ssh/*_host_*
+  umount "$mountdir"
 fi
 
 #Make sure filesystem is ok
