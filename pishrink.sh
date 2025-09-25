@@ -341,10 +341,18 @@ if [[ $prep == true ]]; then
   info "Syspreping: Removing logs, apt archives, dhcp leases and ssh hostkeys"
   mountdir=$(mktemp -d)
   mount "$loopback" "$mountdir"
-  rm -rvf $mountdir/var/cache/apt/archives/* $mountdir/var/lib/dhcpcd5/* $mountdir/var/log/* $mountdir/var/tmp/* $mountdir/tmp/* $mountdir/etc/ssh/*_host_*
-  info "Clear bash history"
+  rm -rvf $mountdir/var/cache/apt/archives/* $mountdir/var/lib/dhcpcd5/* $mountdir/var/tmp/* $mountdir/tmp/* $mountdir/etc/ssh/*_host_*
+  info "=== Cleaning /var/log/ ==="
+  info "--- Deleting journal ---"
+  rm -rf $mountdir/var/log/journal/*
+  info "--- Deleting rotated/compressed logs ---"
+  find $mountdir/var/log -type f \( -name "*1" -o -name "*.001" -o -name "*.gz" \) -print -exec rm -f {} +
+  info "--- Truncating remaining logs (except README) ---"
+  find $mountdir/var/log -type f ! -name "README" ! -name "*.gz" -print -exec truncate -s 0 {} +
+  info "=== Log cleanup finished ==="
+  info "Clear the Bash history file for user 'insight'"
   cat /dev/null > $mountdir/home/insight/.bash_history
-  info "Clear Redis history"
+  info "Clear the redis history file'"
   cat /dev/null > $mountdir/home/insight/.rediscli_history
   umount "$mountdir"
 fi
