@@ -92,7 +92,7 @@ function set_autoexpand() {
         info "An existing /etc/rc.local was not found, autoexpand may fail..."
     fi
 
-    if ! grep -q "## PiShrink https://github.com/Drewsif/PiShrink ##" "$mountdir/etc/rc.local"; then
+    if ! grep -q "## PiShrink https://github.com/aheitmann/PiShrink ##" "$mountdir/etc/rc.local"; then
       echo "Creating new /etc/rc.local"
     if [ -f "$mountdir/etc/rc.local" ]; then
         mv "$mountdir/etc/rc.local" "$mountdir/etc/rc.local.bak"
@@ -100,7 +100,7 @@ function set_autoexpand() {
 
 cat <<'EOFRC' > "$mountdir/etc/rc.local"
 #!/bin/bash
-## PiShrink https://github.com/Drewsif/PiShrink ##
+## PiShrink https://github.com/aheitmann/PiShrink ##
 do_expand_rootfs() {
   ROOT_PART=$(mount | sed -n 's|^/dev/\(.*\) on / .*|\1|p')
 
@@ -218,13 +218,13 @@ if [ "$debug" = true ]; then
 	exec 2> >(stdbuf -i0 -o0 -e0 tee -a "$LOGFILE" >&2)
 fi
 
-echo -e "PiShrink $version - https://github.com/Drewsif/PiShrink\n"
+echo -e "PiShrink $version - https://github.com/aheitmann/PiShrink\n"
 
 # Try and check for updates
 if $update_check; then
-  latest_release=$(curl -m 5 https://api.github.com/repos/Drewsif/PiShrink/releases/latest 2>/dev/null | grep -i "tag_name" 2>/dev/null | awk -F '"' '{print $4}' 2>/dev/null)
+  latest_release=$(curl -m 5 https://api.github.com/repos/aheitmann/PiShrink/releases/latest 2>/dev/null | grep -i "tag_name" 2>/dev/null | awk -F '"' '{print $4}' 2>/dev/null)
   if [[ $? ]] && [ "$latest_release" \> "$version" ]; then
-    echo "WARNING: You do not appear to be running the latest version of PiShrink. Head on over to https://github.com/Drewsif/PiShrink to grab $latest_release"
+    echo "WARNING: You do not appear to be running the latest version of PiShrink. Head on over to https://github.com/aheitmann/PiShrink to grab $latest_release"
     echo ""
   fi
 fi
