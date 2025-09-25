@@ -4,7 +4,7 @@
 # Description: PiShrink is a bash script that automatically shrink a pi image that will then resize to the max size of the SD card on boot.
 # Link: https://github.com/Drewsif/PiShrink
 
-version="v24.10.23"
+version="v25.09.25"
 
 CURRENT_DIR="$(pwd)"
 SCRIPTNAME="${0##*/}"
@@ -342,6 +342,10 @@ if [[ $prep == true ]]; then
   mountdir=$(mktemp -d)
   mount "$loopback" "$mountdir"
   rm -rvf $mountdir/var/cache/apt/archives/* $mountdir/var/lib/dhcpcd5/* $mountdir/var/log/* $mountdir/var/tmp/* $mountdir/tmp/* $mountdir/etc/ssh/*_host_*
+  info "Clear bash history"
+  cat /dev/null > $mountdir/home/insight/.bash_history
+  info "Clear Redis history"
+  cat /dev/null > $mountdir/home/insight/.rediscli_history
   umount "$mountdir"
 fi
 
