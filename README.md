@@ -57,7 +57,7 @@ If you are on Debian/Ubuntu you can install all the packages you would need by r
 Run the block below to install PiShrink onto your system.
 
 ```bash
-wget https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh
+wget https://raw.githubusercontent.com/aheitmann/PiShrink/master/pishrink.sh
 chmod +x pishrink.sh
 sudo mv pishrink.sh /usr/local/bin
 ```
@@ -79,7 +79,7 @@ PiShrink can be ran on Windows using [Windows Subsystem for Linux](https://learn
 1. [Installer Docker](https://docs.docker.com/docker-for-mac/install/).
 2. Clone this repo and cd into the pishrink directory:
    ```bash
-   git clone https://github.com/Drewsif/PiShrink && cd PiShrink
+   git clone https://github.com/aheitmann/PiShrink && cd PiShrink
    ```
 4. Build the container by running:
    ```bash
